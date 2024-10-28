@@ -1,12 +1,12 @@
 from collections import defaultdict, deque
 class Graph:
-
     def __init__(self, vertices):
         self.graph = defaultdict(list)
         self.V = vertices
 
     def addEdge(self,u,v):
         self.graph[u].append(v)
+
     def calculateInOut(self):
         indegrees = [0] * self.V
         outdegreees = [0] * self.V
@@ -19,7 +19,6 @@ class Graph:
         return indegrees,outdegreees
 
     def topologicalSort(self):
-
         indegrees, outdegreees = self.calculateInOut()
         totalInOut=[]
         for i in range(self.V):
@@ -27,9 +26,7 @@ class Graph:
 
         queue = deque([i for i in range(self.V) if indegrees[i] == 0])
         totalInOut = []
-
         topological_order = []
-
         while queue:
             vertex = queue.popleft()
             topological_order.append(vertex + 1)  # Store in topological order, adjusting for 1-based index
@@ -40,11 +37,6 @@ class Graph:
                 # If in-degree becomes zero, add to queue
                 if indegrees[neighbor - 1] == 0:
                     queue.append(neighbor - 1)
-
-            # Check if all vertices are processed, if not, there's a cycle
-        if len(topological_order) != self.V:
-            raise Exception("Graph has a cycle, topological sort not possible.")
-
         return topological_order
 
     def caluculate_Bellman(self, durations):
@@ -93,7 +85,7 @@ class Graph:
         with open(path, 'r') as file:
             # Read the entire file content
             content = file.read().splitlines()
-        N, M = map(int, content[0].strip().split())
+        N, M = map(int, content[0].split())
         durations = list(map(int, content[1].strip().split()))
         dependencies = []
         dependency_data = list(map(int, content[2].strip().split()))
