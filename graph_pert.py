@@ -2,6 +2,9 @@ from graph import Graph
 import random
 from scipy.stats import norm
 import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import skew, kurtosis
+import numpy as np
 
 
 def readData_pertTriangle(path):
@@ -33,11 +36,11 @@ def Pert(durations_x):
         sigma_squared.append(round(pow(sigma,2),2))
     return t_oper, sigma_squared
 
-def plotHist(data,iterations):
-    plt.title(f"Simulation in {iterations} iterations")
-    plt.xlabel("finish Times")
-    plt.ylabel("Number of samples")
-    plt.hist(data, 50)
+def plotHist(data,iterations,num_bins, title, xlabel, ylabel):
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    sns.histplot(data, bins=num_bins, kde=True, color='g', edgecolor="black")
     plt.show()
     plt.savefig(f"{iterations}.png")
     plt.close()
@@ -78,7 +81,7 @@ if __name__ == "__main__":
 
     # Triangle dist
     processTimes = []
-    num = 10000
+    num = 100000
 
     #create graph
     g = Graph(N)
@@ -88,20 +91,40 @@ if __name__ == "__main__":
     for i in range(num):
         durations = triangleDist(durations_x)
         finalData, processTime, criticalPath = g.caluculate_Bellman(durations)
-        round(processTime)
         processTimes.append(processTime)
     simProbs = []
 
-    for sample in range(10, 24):
+    for sample in range(13, 24):
         counter = 0
         for i in processTimes:
             if (i <= sample):
                 counter += 1
-        simProbs.append((counter/len(processTimes))*100)
+        simProbs.append(round((counter/len(processTimes))*100, 3))
     print("===========================TRIANGLE SIMULATION===========================")
     print(simProbs)
-    plotHist(processTimes,num)
+    titleSim = f"PERT triangular simulation in {num} iterations"
+    xlabelSim = "Process time [days]"
+    ylabelSim = "Number of samples"
+
+    # Freedmana-Diaconis - wyliczenie bins na histogramie
+    iqr = np.percentile(processTimes, 75) - np.percentile(processTimes, 25)
+    bin_width = 2 * iqr / (len(processTimes) ** (1 / 3))
+    num_bins = int((max(processTimes) - min(processTimes)) / bin_width)
 
 
+    min_value = np.min(processTimes)
+    max_value = np.max(processTimes)
+    mean_value = np.mean(processTimes)
+    median_value = np.median(processTimes)
+    std_dev = np.std(processTimes)
+    asymmetry = skew(processTimes)
+    peakness = kurtosis(processTimes, fisher=False)
+    print("Minimalny czas:", min_value)
+    print("Maksymalny czas:", max_value)
+    print("Średni czas:", mean_value)
+    print("Mediana:", median_value)
+    print("Odchylenie standardowe:", std_dev)
+    print("Wskaźnik asymetrii (Skewness):", asymmetry)
+    print("Kurtoza (Kurtosis):", peakness)
 
-
+    plotHist(processTimes, num, num_bins, titleSim, xlabelSim, ylabelSim)
