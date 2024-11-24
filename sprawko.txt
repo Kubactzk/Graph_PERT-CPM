@@ -1,0 +1,12 @@
+znaleźc min path A => Z
+
+
+Co na sprawozdaniu:
++algorytm Forda-Fulkersona
++algorytm Algorytm Edmondsa-Karpa
++koszt przecięcia grafu (minimalizacja, "minimalne przecięcie grafu") --> puścić max przepływ i wyliczyć przecięcie
+
+Cel:
+nie jest rozwiązanie przykładu testowego
+porównać co najmniej dwa lagorytmy (Forda-Fulkersona && Edmondsa-Karpa)
+zrobić badania
